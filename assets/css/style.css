@@ -36,3 +36,14 @@ body {
   background-color: rgb(87, 80, 117);
   color: white;
 }
+
+/* Temperature toggle switch styling */
+.form-check-input:checked {
+  background-color: rgb(87, 80, 117);
+  border-color: rgb(87, 80, 117);
+}
+
+.form-check-label {
+  font-weight: 500;
+  color: rgb(87, 80, 117);
+}
