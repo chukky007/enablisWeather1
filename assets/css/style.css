@@ -10,6 +10,17 @@ body {
   color: white;
 }
 
+/* Current Weather heading with cloud background */
+.current-weather-header {
+  background-image: url('../img/weather.png');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-color: rgb(87, 80, 117);
+  color: white;
+  padding: 20px;
+}
+
 /* set side of current weather */
 .card-header {
   font-size: 36px;
