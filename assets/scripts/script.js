@@ -1,3 +1,21 @@
+// --- Trump Popup for Fahrenheit/Celsius Toggle ---
+function showTrumpPopup(message) {
+  // If popup already exists, remove it first
+  $('#trumpNicePopup').remove();
+  // Create popup HTML
+  const popup = $(`
+    <div id=\"trumpNicePopup\" style=\"position:fixed;z-index:9999;top:0;left:0;width:100vw;height:100vh;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,0.4);\">
+      <div style=\"background:#fff;border-radius:16px;box-shadow:0 4px 32px rgba(0,0,0,0.25);padding:2rem 2.5rem;display:flex;flex-direction:column;align-items:center;max-width:90vw;\">
+        <img src='https://upload.wikimedia.org/wikipedia/commons/5/56/Donald_Trump_official_portrait.jpg' alt='Donald Trump' style='width:120px;height:120px;object-fit:cover;border-radius:50%;margin-bottom:1rem;border:3px solid #f47c20;'>
+        <div style='font-size:2rem;font-weight:bold;color:#f47c20;margin-bottom:0.5rem;'>${message}</div>
+      </div>
+    </div>
+  `);
+  // Add to body
+  $('body').append(popup);
+  // Remove after 1.5 seconds
+  setTimeout(() => { $('#trumpNicePopup').fadeOut(400, function() { $(this).remove(); }); }, 1500);
+}
 // --- Dark/Light Mode Toggle ---
 $(document).ready(function () {
   // Set initial theme from localStorage
@@ -53,8 +71,16 @@ function getTempUnit() {
 // Add event listener for temperature toggle
 $(document).ready(function() {
   $('#temperatureToggle').on('change', function() {
-    isFahrenheit = $(this).is(':checked');
-    
+    const nowFahrenheit = $(this).is(':checked');
+    // If toggling to Fahrenheit, show 'Nice!'
+    if (nowFahrenheit && !isFahrenheit) {
+      showTrumpPopup('Nice!');
+    }
+    // If toggling to Celsius, show 'Not cool!'
+    if (!nowFahrenheit && isFahrenheit) {
+      showTrumpPopup('Not cool!');
+    }
+    isFahrenheit = nowFahrenheit;
     // Update all displayed temperatures if weather data is shown
     updateTemperatureDisplay();
   });
