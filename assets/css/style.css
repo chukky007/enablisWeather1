@@ -1,38 +1,174 @@
-/* Set body font setting */
+/* Weather background image for main panel */
+.weather-bg {
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  min-height: 100vh;
+  transition: background-image 0.5s;
+}
+/* Theme variables */
+
+:root {
+  --main-bg: #f5f6fa;
+  --main-text: #222;
+  --header-bg: #222;
+  --header-text: #fff;
+  --accent: #f47c20;
+  --card-bg: #fff;
+  --card-text: #222;
+  --primary-btn-bg: #f47c20;
+  --primary-btn-text: #fff;
+  --secondary-btn-bg: #222;
+  --secondary-btn-text: #fff;
+  --border-radius: 16px;
+  --shadow: 0 2px 12px rgba(0,0,0,0.08);
+}
+
+
 body {
-  font-family: 'Open Sans', sans-serif;
+  font-family: 'Segoe UI', 'Open Sans', Arial, sans-serif;
   font-size: 16px;
+  background: var(--main-bg);
+  color: var(--main-text);
+  transition: background 0.3s, color 0.3s;
+}
+
+body.dark-mode {
+  --main-bg: #181a1b;
+    background: rgba(255,255,255,0.85);
+    backdrop-filter: blur(2px);
+  --header-bg: #23272f;
+  --header-text: #fff;
+  --card-bg: #23272f;
+  --card-text: #e0e0e0;
+  --primary-btn-bg: #f47c20;
+  --primary-btn-text: #fff;
+  --secondary-btn-bg: #e0e0e0;
+  --secondary-btn-text: #23272f;
 }
 
 /* set the title banner dashboard and forecast card color */
+
+header {
+  background: var(--header-bg);
+  color: var(--header-text);
+  padding: 1.5rem 0 1rem 0;
+  margin-bottom: 2rem;
+  border-bottom: 4px solid var(--accent);
+}
+
 .text-center {
-  background-color: rgb(87, 80, 117);
-  color: white;
+  background: none;
+  color: inherit;
+  font-weight: 700;
+  font-size: 2.5rem;
+  letter-spacing: 1px;
+  margin-bottom: 0;
 }
 
 /* set side of current weather */
+
 .card-header {
-  font-size: 36px;
+  font-size: 1.5rem;
+  font-weight: 600;
 }
 
 /* Set the width to 100% to match search button width */
+
 .list-group.searchHistory .cityButton {
   width: 100%;
+  border-radius: var(--border-radius);
+  margin-bottom: 0.5rem;
+  background: var(--secondary-btn-bg);
+  color: var(--secondary-btn-text);
+  border: none;
+  font-weight: 500;
+  transition: background 0.2s, color 0.2s;
+}
+.list-group.searchHistory .cityButton:hover {
+  background: var(--accent);
+  color: #fff;
 }
 
 /* set the search button color */
+
 .btn.btn-primary {
-  background-color: rgb(87, 80, 117);
-  color: white;
+  background: var(--primary-btn-bg);
+  color: var(--primary-btn-text);
   border: none;
+  border-radius: var(--border-radius);
+  font-weight: 600;
+  font-size: 1.1rem;
+  padding: 0.6rem 1.5rem;
+  box-shadow: var(--shadow);
+  transition: background 0.2s, color 0.2s;
+}
+.btn.btn-primary:hover {
+  background: #d96500;
+  color: #fff;
+}
+
+.btn.btn-outline-secondary {
+  border: 2px solid var(--accent);
+  color: var(--accent);
+  background: transparent;
+  border-radius: var(--border-radius);
+  font-weight: 600;
+  font-size: 1.1rem;
+  padding: 0.6rem 1.5rem;
+  margin-left: 1rem;
+  transition: background 0.2s, color 0.2s;
+}
+.btn.btn-outline-secondary:hover {
+  background: var(--accent);
+  color: #fff;
 }
 
 /* set the 5-day forecast card color */
+
 .card-0,
 .card-1,
 .card-2,
 .card-3,
 .card-4 {
-  background-color: rgb(87, 80, 117);
-  color: white;
+  background: rgba(255,255,255,0.82);
+  backdrop-filter: blur(2px);
+}
+/* Main weather card */
+.current-card {
+  background: var(--card-bg);
+  color: var(--card-text);
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow);
+  border: 1px solid #e0e0e0;
+  margin-bottom: 2rem;
+  padding: 1.5rem 1rem;
+}
+
+/* Section titles */
+h2 {
+  color: var(--accent);
+  font-weight: 700;
+  margin-top: 1.5rem;
+  margin-bottom: 1rem;
+  letter-spacing: 0.5px;
+}
+
+/* Input styling */
+.form-control {
+  border-radius: var(--border-radius);
+  border: 1px solid #ccc;
+  font-size: 1.1rem;
+  padding: 0.7rem 1rem;
+  margin-bottom: 0.5rem;
+}
+
+/* Responsive tweaks */
+@media (max-width: 768px) {
+  .current-card, .card-0, .card-1, .card-2, .card-3, .card-4 {
+    padding: 1rem 0.3rem;
+  }
+  .text-center {
+    font-size: 2rem;
+  }
 }

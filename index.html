@@ -16,10 +16,13 @@
 
 <body>
     <header>
-        <h1 class="text-center">Weather Dashboard</h1>
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <h1 class="text-center" style="margin-bottom: 0;">Weather Dashboard</h1>
+            <button id="themeToggle" class="btn btn-outline-secondary" aria-label="Toggle dark/light mode" style="margin-left: 1rem;">🌙 Dark Mode</button>
+        </div>
     </header>
     <!-- container for dashboard -->
-    <div class="container mt-5">
+    <div class="container mt-5 weather-bg" id="weatherBgContainer">
         <div class="row">
 
             <!-- Search Column on the Left -->

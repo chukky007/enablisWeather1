@@ -1,3 +1,28 @@
+// --- Dark/Light Mode Toggle ---
+$(document).ready(function () {
+  // Set initial theme from localStorage
+  const savedTheme = localStorage.getItem('theme');
+  if (savedTheme === 'dark') {
+    $('body').addClass('dark-mode');
+    $('#themeToggle').text('☀️ Light Mode');
+  } else {
+    $('body').removeClass('dark-mode');
+    $('#themeToggle').text('🌙 Dark Mode');
+  }
+
+  // Toggle theme on button click
+  $('#themeToggle').on('click', function () {
+    $('body').toggleClass('dark-mode');
+    const isDark = $('body').hasClass('dark-mode');
+    if (isDark) {
+      $(this).text('☀️ Light Mode');
+      localStorage.setItem('theme', 'dark');
+    } else {
+      $(this).text('🌙 Dark Mode');
+      localStorage.setItem('theme', 'light');
+    }
+  });
+});
 
 // Add a listener for click event search for a location
 $('#searchButton').on('click', function () {
@@ -127,23 +152,34 @@ function currentAndForecastWeather(city, lat, lon) {
   // Call currentAndForecastWeatherAPI for current and forecast weather
   currentAndForecastWeatherAPI(lat,lon)
   .then(([legibleDate, weatherIcon, temp, windSpeed, humidity]) => {
-
-    // check API data output for current weather location
-    // console.log(legibleDate,weatherIcon,temp,windSpeed,humidity) // TODO comment when tested
-
-    // After searching show weather forecast
-
     // Show the current weather container
     $('#currentWeather').show();
-
-    // Show the 5-day forecast container
     $('#fiveDayForecast').show();
-
-    // Show the 5-day forecast cards
     $('#fiveDayForecastCard').show();
-    
-    // Call function to display city current forecast
     viewCurrentWeather(city, legibleDate[0], weatherIcon[0], temp[0], windSpeed[0], humidity[0]);
+
+    // Set weather background image based on weather description
+    const weatherDesc = weatherIcon[0];
+    let bgUrl = '';
+    // Map emoji/icon to background image
+    if (weatherDesc.includes('☀️')) {
+      bgUrl = 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1200&q=80'; // sunny
+    } else if (weatherDesc.includes('⛅️') || weatherDesc.includes('🌤️') || weatherDesc.includes('🌥️')) {
+      bgUrl = 'https://images.unsplash.com/photo-1465101046530-73398c7f28ca?auto=format&fit=crop&w=1200&q=80'; // partly cloudy
+    } else if (weatherDesc.includes('☁️')) {
+      bgUrl = 'https://images.unsplash.com/photo-1502082553048-f009c37129b9?auto=format&fit=crop&w=1200&q=80'; // cloudy
+    } else if (weatherDesc.includes('🌧️') || weatherDesc.includes('🌦️')) {
+      bgUrl = 'https://images.unsplash.com/photo-1464983953574-0892a716854b?auto=format&fit=crop&w=1200&q=80'; // rain
+    } else if (weatherDesc.includes('🌨️') || weatherDesc.includes('❄️')) {
+      bgUrl = 'https://images.unsplash.com/photo-1519681393784-d120267933ba?auto=format&fit=crop&w=1200&q=80'; // snow
+    } else if (weatherDesc.includes('⛈️')) {
+      bgUrl = 'https://images.unsplash.com/photo-1501594907352-04cda38ebc29?auto=format&fit=crop&w=1200&q=80'; // thunderstorm
+    } else if (weatherDesc.includes('🌫️')) {
+      bgUrl = 'https://images.unsplash.com/photo-1469474968028-56623f02e42e?auto=format&fit=crop&w=1200&q=80'; // fog
+    } else {
+      bgUrl = 'https://images.unsplash.com/photo-1465101178521-c1a9136a3b99?auto=format&fit=crop&w=1200&q=80'; // default
+    }
+    $('#weatherBgContainer').css('background-image', `url('${bgUrl}')`);
 
     // Remove the first element for current weather
     const DateForecast = legibleDate.slice(1);
@@ -151,20 +187,10 @@ function currentAndForecastWeather(city, lat, lon) {
     const tempForecast = temp.slice(1);
     const windSpeedForecast = windSpeed.slice(1);
     const humidityForecast = humidity.slice(1);
-
-    // check API data output for forecast weather location
-    // console.log(DateForecast, weatherIconForecast, tempForecast, windSpeedForecast, humidityDateForecast) // TODO comment when tested
-
-    // Call function to display city 5-day forecast
     viewForescastWeather(DateForecast, weatherIconForecast, tempForecast, windSpeedForecast, humidityForecast);
-
   })
-  // catch error for Geo API call
   .catch(error => {
-
-    // console message for API call error
     console.error("Error calling currentWeatherForecastAPI:", error)
-
   });
 }
 
