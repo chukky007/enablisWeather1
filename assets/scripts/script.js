@@ -24,6 +24,74 @@ $(document).ready(function () {
   });
 });
 
+// Global variable to track current temperature unit (true = Fahrenheit, false = Celsius)
+let isFahrenheit = false;
+
+// Global variables to store raw temperature data for conversion
+let currentWeatherData = null;
+let forecastWeatherData = null;
+
+// Temperature conversion functions
+function celsiusToFahrenheit(celsius) {
+  return (celsius * 9/5) + 32;
+}
+
+function fahrenheitToCelsius(fahrenheit) {
+  return (fahrenheit - 32) * 5/9;
+}
+
+// Function to convert temperature based on current unit preference
+function convertTemperature(temp) {
+  return isFahrenheit ? celsiusToFahrenheit(temp) : temp;
+}
+
+// Function to get temperature unit symbol
+function getTempUnit() {
+  return isFahrenheit ? '°F' : '°C';
+}
+
+// Add event listener for temperature toggle
+$(document).ready(function() {
+  $('#temperatureToggle').on('change', function() {
+    isFahrenheit = $(this).is(':checked');
+    
+    // Update all displayed temperatures if weather data is shown
+    updateTemperatureDisplay();
+  });
+});
+
+// Function to update all temperature displays when unit is changed
+function updateTemperatureDisplay() {
+  // Check if current weather is visible and we have stored data
+  if ($('#currentWeather').is(':visible') && currentWeatherData && forecastWeatherData) {
+    // Update current weather temperature display
+    updateCurrentWeatherTemp();
+    
+    // Update forecast weather temperature displays
+    updateForecastWeatherTemp();
+  }
+}
+
+// Function to update current weather temperature display
+function updateCurrentWeatherTemp() {
+  if (currentWeatherData) {
+    const convertedTemp = Math.round(convertTemperature(currentWeatherData.temp) * 10) / 10;
+    const tempDisplay = `Temp: ${convertedTemp} ${getTempUnit()}`;
+    $('.current-card #temp').text(tempDisplay);
+  }
+}
+
+// Function to update forecast weather temperature displays
+function updateForecastWeatherTemp() {
+  if (forecastWeatherData && forecastWeatherData.temps) {
+    for (let index = 0; index < forecastWeatherData.temps.length; index++) {
+      const convertedTemp = Math.round(convertTemperature(forecastWeatherData.temps[index]) * 10) / 10;
+      const tempDisplay = `Temp: ${convertedTemp} ${getTempUnit()}`;
+      $(`.card-${index} #temp`).text(tempDisplay);
+    }
+  }
+}
+
 // Add a listener for click event search for a location
 $('#searchButton').on('click', function () {
 
@@ -198,6 +266,16 @@ function currentAndForecastWeather(city, lat, lon) {
 // show City, Date, Weather-Icon, Temperature, Wind-Speed and Humidity in current weather
 function viewCurrentWeather(city,legibleDate,weatherIcon,temp,windSpeed,humidity) {
 
+  // Store raw temperature data for unit conversion
+  currentWeatherData = {
+    city: city,
+    legibleDate: legibleDate,
+    weatherIcon: weatherIcon,
+    temp: temp,
+    windSpeed: windSpeed,
+    humidity: humidity
+  };
+
   // split address, date at comma
   const partCity = city.split(",");
   const partDate = legibleDate.split(",");
@@ -218,8 +296,11 @@ function viewCurrentWeather(city,legibleDate,weatherIcon,temp,windSpeed,humidity
   // set weather icon display to html container
   $('.current-card #weather-icon').text(cityDisplayandWeatherIcon);
   
-  // display current temperature
-  cityDisplayandTemp = `Temp: ${temp} °C`;
+  // convert temperature based on unit preference and round to 1 decimal place
+  const convertedTemp = Math.round(convertTemperature(temp) * 10) / 10;
+  
+  // display current temperature with appropriate unit
+  cityDisplayandTemp = `Temp: ${convertedTemp} ${getTempUnit()}`;
 
   // set temperature display to html container
   $('.current-card #temp').text(cityDisplayandTemp);
@@ -240,6 +321,15 @@ function viewCurrentWeather(city,legibleDate,weatherIcon,temp,windSpeed,humidity
 
 // show Date Weather-Icon, Temperature, Wind-Speed and Humidity in 5-day forecast weather
 function viewForescastWeather(legibleDate,weatherIcon,temp,windSpeed,humidity) {
+
+  // Store raw forecast temperature data for unit conversion
+  forecastWeatherData = {
+    legibleDate: legibleDate,
+    weatherIcon: weatherIcon,
+    temps: temp,
+    windSpeed: windSpeed,
+    humidity: humidity
+  };
 
   // check API data input to function for forecast weather location
   // console.log(legibleDate,weatherIcon,temp,windSpeed,humidity) // TODO comment when tested
@@ -265,8 +355,11 @@ function viewForescastWeather(legibleDate,weatherIcon,temp,windSpeed,humidity) {
     // set weather-icon to html card
     $(elementIcon).text(weatherIcon[index])
 
-    // display current temperature
-    displayTemp = `Temp: ${temp[index]} °C`;
+    // convert temperature based on unit preference and round to 1 decimal place
+    const convertedTemp = Math.round(convertTemperature(temp[index]) * 10) / 10;
+
+    // display temperature with appropriate unit
+    displayTemp = `Temp: ${convertedTemp} ${getTempUnit()}`;
 
     // set temperature display to html card
     $(elementTemp).text(displayTemp);;

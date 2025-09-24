@@ -66,6 +66,19 @@ header {
   margin-bottom: 0;
 }
 
+/* Current Weather heading with cloud background */
+.current-weather-header {
+  background-image: url('https://images.unsplash.com/photo-1506905925346-21bda4d32df4?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=200&q=80');
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-color: rgb(87, 80, 117);
+  color: #C0C0C0;
+  font-weight: 900;
+  padding: 20px;
+  position: relative;
+}
+
 /* set side of current weather */
 
 .card-header {
@@ -133,7 +146,23 @@ header {
 .card-4 {
   background: rgba(255,255,255,0.82);
   backdrop-filter: blur(2px);
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow);
+  padding: 1rem;
+  margin-bottom: 1rem;
 }
+
+/* Temperature toggle switch styling */
+.form-check-input:checked {
+  background-color: rgb(87, 80, 117);
+  border-color: rgb(87, 80, 117);
+}
+
+.form-check-label {
+  font-weight: 500;
+  color: rgb(87, 80, 117);
+}
+
 /* Main weather card */
 .current-card {
   background: var(--card-bg);
