@@ -1,3 +1,46 @@
+// --- Trump Popup for Fahrenheit/Celsius Toggle ---
+function showTrumpPopup(message) {
+  // If popup already exists, remove it first
+  $('#trumpNicePopup').remove();
+  // Create popup HTML
+  const popup = $(`
+    <div id=\"trumpNicePopup\" style=\"position:fixed;z-index:9999;top:0;left:0;width:100vw;height:100vh;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,0.4);\">
+      <div style=\"background:#fff;border-radius:16px;box-shadow:0 4px 32px rgba(0,0,0,0.25);padding:2rem 2.5rem;display:flex;flex-direction:column;align-items:center;max-width:90vw;\">
+        <img src='https://upload.wikimedia.org/wikipedia/commons/5/56/Donald_Trump_official_portrait.jpg' alt='Donald Trump' style='width:120px;height:120px;object-fit:cover;border-radius:50%;margin-bottom:1rem;border:3px solid #f47c20;'>
+        <div style='font-size:2rem;font-weight:bold;color:#f47c20;margin-bottom:0.5rem;'>${message}</div>
+      </div>
+    </div>
+  `);
+  // Add to body
+  $('body').append(popup);
+  // Remove after 1.5 seconds
+  setTimeout(() => { $('#trumpNicePopup').fadeOut(400, function() { $(this).remove(); }); }, 1500);
+}
+// --- Dark/Light Mode Toggle ---
+$(document).ready(function () {
+  // Set initial theme from localStorage
+  const savedTheme = localStorage.getItem('theme');
+  if (savedTheme === 'dark') {
+    $('body').addClass('dark-mode');
+    $('#themeToggle').text('☀️ Light Mode');
+  } else {
+    $('body').removeClass('dark-mode');
+    $('#themeToggle').text('🌙 Dark Mode');
+  }
+
+  // Toggle theme on button click
+  $('#themeToggle').on('click', function () {
+    $('body').toggleClass('dark-mode');
+    const isDark = $('body').hasClass('dark-mode');
+    if (isDark) {
+      $(this).text('☀️ Light Mode');
+      localStorage.setItem('theme', 'dark');
+    } else {
+      $(this).text('🌙 Dark Mode');
+      localStorage.setItem('theme', 'light');
+    }
+  });
+});
 
 // Global variable to track current temperature unit (true = Fahrenheit, false = Celsius)
 let isFahrenheit = false;
@@ -28,8 +71,16 @@ function getTempUnit() {
 // Add event listener for temperature toggle
 $(document).ready(function() {
   $('#temperatureToggle').on('change', function() {
-    isFahrenheit = $(this).is(':checked');
-    
+    const nowFahrenheit = $(this).is(':checked');
+    // If toggling to Fahrenheit, show 'Nice!'
+    if (nowFahrenheit && !isFahrenheit) {
+      showTrumpPopup('Nice!');
+    }
+    // If toggling to Celsius, show 'Not cool!'
+    if (!nowFahrenheit && isFahrenheit) {
+      showTrumpPopup('Not cool!');
+    }
+    isFahrenheit = nowFahrenheit;
     // Update all displayed temperatures if weather data is shown
     updateTemperatureDisplay();
   });
@@ -195,23 +246,34 @@ function currentAndForecastWeather(city, lat, lon) {
   // Call currentAndForecastWeatherAPI for current and forecast weather
   currentAndForecastWeatherAPI(lat,lon)
   .then(([legibleDate, weatherIcon, temp, windSpeed, humidity]) => {
-
-    // check API data output for current weather location
-    // console.log(legibleDate,weatherIcon,temp,windSpeed,humidity) // TODO comment when tested
-
-    // After searching show weather forecast
-
     // Show the current weather container
     $('#currentWeather').show();
-
-    // Show the 5-day forecast container
     $('#fiveDayForecast').show();
-
-    // Show the 5-day forecast cards
     $('#fiveDayForecastCard').show();
-    
-    // Call function to display city current forecast
     viewCurrentWeather(city, legibleDate[0], weatherIcon[0], temp[0], windSpeed[0], humidity[0]);
+
+    // Set weather background image based on weather description
+    const weatherDesc = weatherIcon[0];
+    let bgUrl = '';
+    // Map emoji/icon to background image
+    if (weatherDesc.includes('☀️')) {
+      bgUrl = 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1200&q=80'; // sunny
+    } else if (weatherDesc.includes('⛅️') || weatherDesc.includes('🌤️') || weatherDesc.includes('🌥️')) {
+      bgUrl = 'https://images.unsplash.com/photo-1465101046530-73398c7f28ca?auto=format&fit=crop&w=1200&q=80'; // partly cloudy
+    } else if (weatherDesc.includes('☁️')) {
+      bgUrl = 'https://images.unsplash.com/photo-1502082553048-f009c37129b9?auto=format&fit=crop&w=1200&q=80'; // cloudy
+    } else if (weatherDesc.includes('🌧️') || weatherDesc.includes('🌦️')) {
+      bgUrl = 'https://images.unsplash.com/photo-1464983953574-0892a716854b?auto=format&fit=crop&w=1200&q=80'; // rain
+    } else if (weatherDesc.includes('🌨️') || weatherDesc.includes('❄️')) {
+      bgUrl = 'https://images.unsplash.com/photo-1519681393784-d120267933ba?auto=format&fit=crop&w=1200&q=80'; // snow
+    } else if (weatherDesc.includes('⛈️')) {
+      bgUrl = 'https://images.unsplash.com/photo-1501594907352-04cda38ebc29?auto=format&fit=crop&w=1200&q=80'; // thunderstorm
+    } else if (weatherDesc.includes('🌫️')) {
+      bgUrl = 'https://images.unsplash.com/photo-1469474968028-56623f02e42e?auto=format&fit=crop&w=1200&q=80'; // fog
+    } else {
+      bgUrl = 'https://images.unsplash.com/photo-1465101178521-c1a9136a3b99?auto=format&fit=crop&w=1200&q=80'; // default
+    }
+    $('#weatherBgContainer').css('background-image', `url('${bgUrl}')`);
 
     // Remove the first element for current weather
     const DateForecast = legibleDate.slice(1);
@@ -219,20 +281,10 @@ function currentAndForecastWeather(city, lat, lon) {
     const tempForecast = temp.slice(1);
     const windSpeedForecast = windSpeed.slice(1);
     const humidityForecast = humidity.slice(1);
-
-    // check API data output for forecast weather location
-    // console.log(DateForecast, weatherIconForecast, tempForecast, windSpeedForecast, humidityDateForecast) // TODO comment when tested
-
-    // Call function to display city 5-day forecast
     viewForescastWeather(DateForecast, weatherIconForecast, tempForecast, windSpeedForecast, humidityForecast);
-
   })
-  // catch error for Geo API call
   .catch(error => {
-
-    // console message for API call error
     console.error("Error calling currentWeatherForecastAPI:", error)
-
   });
 }
 
